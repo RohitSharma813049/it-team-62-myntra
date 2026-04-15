@@ -14,6 +14,7 @@ import Cart from "./components/Account/Carts";
 import SearchPage from "./Pages/SearchPage";
 import BeautyPage from "./Pages/Beautypage"
 import OffersPage from "./Pages/Offerpage"
+import AccountLayout from "./Pages/AccountLayout";
 
 // Lazy imports
 const Home = lazy(() => import("./Pages/Home"));
@@ -54,7 +55,10 @@ function App() {
         <Route path="/product/:id" element={<ProductPage />} />
 
         {/* 🔐 LOGIN (NO NAVBAR) */}
-        <Route
+        
+        
+        <Route element={<AccountLayout/>}>
+          <Route
           path="/login"
           element={
             <PublicRoute>
@@ -62,6 +66,7 @@ function App() {
             </PublicRoute>
           }
         />
+        </Route>
 
         {/* 👤 DASHBOARD (NO NAVBAR) */}
         <Route

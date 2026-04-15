@@ -15,14 +15,14 @@ const AuthPage = () => {
 
   const [otp, setOtp] = useState("");
 
-  // ✅ Redirect if already logged in
+  //  Redirect if already logged in
   useEffect(() => {
     if (user) {
       navigate("/");
     }
   }, [user, navigate]);
 
-  // ✅ Prevent UI flash
+  //  Prevent UI flash
   if (user) return null;
 
   return (
