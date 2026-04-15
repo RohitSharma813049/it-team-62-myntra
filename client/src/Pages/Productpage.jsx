@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { Helmet } from "react-helmet-async";
 import { products } from "../Data/Products";
 import {
   addToCart,
@@ -27,14 +28,12 @@ const ProductPage = () => {
     return <div className="p-10 text-center">Product not found</div>;
   }
 
-  // 💰 FINAL PRICE
   const discountPrice = Math.round(
     product.price - (product.price * product.discount) / 100
   );
 
   const isWishlisted = wishlist.some((p) => p.id === product.id);
 
-  // 🧠 CLEAN PRODUCT FOR CART
   const cartItem = {
     id: product.id,
     name: product.name,
@@ -42,16 +41,14 @@ const ProductPage = () => {
     image: product.image,
   };
 
-  // ⭐ SAFE DATA HANDLING
   const rating =
     typeof product.rating === "number" ? product.rating : 4.2;
 
   const description =
     typeof product.description === "string"
       ? product.description
-      : "Premium quality fabric with modern design. Comfortable for daily wear and perfect for casual outings.";
+      : "Premium quality fabric with modern design.";
 
-  // ✅ FIXED REVIEWS (NO ERROR)
   const reviews = Array.isArray(product.reviews)
     ? product.reviews
     : [
@@ -65,131 +62,133 @@ const ProductPage = () => {
           rating: 4,
           comment: "Good product but delivery was a bit late.",
         },
-        {
-          name: "Rahul Singh",
-          rating: 5,
-          comment: "Perfect fit and very comfortable!",
-        },
       ];
 
   return (
-    <div className="max-w-6xl mx-auto p-4 grid md:grid-cols-2 gap-10">
+    <>
+      {/* 🔥 HELMET */}
+      <Helmet>
+        <title>{product.name}</title>
+        <meta name="description" content={description} />
+      </Helmet>
 
-      {/* IMAGE */}
-      <img
-        src={product.image}
-        alt={product.name}
-        className="w-full h-[400px] object-cover rounded cursor-pointer"
-        onClick={() => setZoom(product.image)}
-      />
+      <div className="max-w-6xl mx-auto p-4 grid md:grid-cols-2 gap-10">
 
-      {/* DETAILS */}
-      <div>
-        <h1 className="text-2xl font-bold">{product.brand}</h1>
-        <p className="text-gray-600">{product.name}</p>
+        {/* IMAGE */}
+        <img
+          src={product.image}
+          alt={product.name}
+          className="w-full h-[300px] md:h-[400px] object-cover rounded cursor-pointer"
+          onClick={() => setZoom(product.image)}
+        />
 
-        {/* PRICE */}
-        <h2 className="text-xl font-bold mt-4">
-          ₹{discountPrice}
-          <span className="text-gray-500 line-through ml-2 text-sm">
-            ₹{product.price}
-          </span>
-        </h2>
+        {/* DETAILS */}
+        <div>
+          <h1 className="text-xl md:text-2xl font-bold">
+            {product.brand}
+          </h1>
 
-        {/* ⭐ RATING */}
-        <div className="flex items-center gap-2 mt-2">
-          <span className="text-yellow-500">
-            {"⭐".repeat(Math.round(rating))}
-          </span>
-          <span className="text-gray-600 text-sm">
-            ({rating} rating)
-          </span>
+          <p className="text-gray-600 text-sm md:text-base">
+            {product.name}
+          </p>
+
+          {/* PRICE */}
+          <h2 className="text-lg md:text-xl font-bold mt-4">
+            ₹{discountPrice}
+            <span className="text-gray-500 line-through ml-2 text-sm">
+              ₹{product.price}
+            </span>
+          </h2>
+
+          {/* RATING */}
+          <div className="flex items-center gap-2 mt-2">
+            <span className="text-yellow-500">
+              {"⭐".repeat(Math.round(rating))}
+            </span>
+            <span className="text-gray-600 text-sm">
+              ({rating})
+            </span>
+          </div>
+
+          {/* DESCRIPTION */}
+          <p className="mt-4 text-gray-700 text-sm md:text-base">
+            {description}
+          </p>
+
+          {/* BUTTONS */}
+          <div className="mt-6 flex gap-3 flex-wrap">
+            <button
+              onClick={() => {
+                dispatch(addToCart(cartItem));
+                setAdded(true);
+                setTimeout(() => setAdded(false), 1500);
+              }}
+              className="bg-pink-500 text-white px-4 py-2 rounded text-sm"
+            >
+              Add to Bag
+            </button>
+
+            <button
+              onClick={() => {
+                dispatch(addToCart(cartItem));
+                setTimeout(() => dispatch(placeOrder()), 50);
+              }}
+              className="bg-black text-white px-4 py-2 rounded text-sm"
+            >
+              Buy Now
+            </button>
+
+            <button
+              onClick={() => dispatch(toggleWishlist(cartItem))}
+              className={`px-4 py-2 border rounded text-sm ${
+                isWishlisted ? "bg-pink-500 text-white" : ""
+              }`}
+            >
+              {isWishlisted ? "❤️ Wishlisted" : "🤍 Wishlist"}
+            </button>
+          </div>
+
+          {added && (
+            <p className="text-green-600 mt-3 text-sm">
+              Added to Bag ✔
+            </p>
+          )}
         </div>
 
-        {/* 📄 DESCRIPTION */}
-        <p className="mt-4 text-gray-700">{description}</p>
+        {/* REVIEWS */}
+        <div className="md:col-span-2 mt-8">
+          <h2 className="text-lg font-bold mb-4">
+            Customer Reviews
+          </h2>
 
-        {/* BUTTONS */}
-        <div className="mt-6 flex gap-4 flex-wrap">
-
-          {/* ADD TO CART */}
-          <button
-            onClick={() => {
-              dispatch(addToCart(cartItem));
-              setAdded(true);
-              setTimeout(() => setAdded(false), 1500);
-            }}
-            className="bg-pink-500 text-white px-5 py-2 rounded"
-          >
-            Add to Bag
-          </button>
-
-          {/* BUY NOW */}
-          <button
-            onClick={() => {
-              dispatch(addToCart(cartItem));
-              setTimeout(() => {
-                dispatch(placeOrder());
-              }, 50);
-            }}
-            className="bg-black text-white px-5 py-2 rounded"
-          >
-            Buy Now
-          </button>
-
-          {/* WISHLIST */}
-          <button
-            onClick={() => dispatch(toggleWishlist(cartItem))}
-            className={`px-5 py-2 border rounded ${
-              isWishlisted ? "bg-pink-500 text-white" : ""
-            }`}
-          >
-            {isWishlisted ? "❤️ Wishlisted" : "🤍 Wishlist"}
-          </button>
-        </div>
-
-        {added && (
-          <p className="text-green-600 mt-3">Added to Bag ✔</p>
-        )}
-      </div>
-
-      {/* 💬 REVIEWS */}
-      <div className="md:col-span-2 mt-10">
-        <h2 className="text-lg font-bold mb-4">Customer Reviews</h2>
-
-        {reviews.length > 0 ? (
-          reviews.map((rev, index) => (
-            <div key={index} className="border-b py-4">
+          {reviews.map((rev, index) => (
+            <div key={index} className="border-b py-3">
               <p className="font-semibold">{rev.name}</p>
-
               <div className="text-yellow-500 text-sm">
-                {"⭐".repeat(rev.rating || 4)}
+                {"⭐".repeat(rev.rating)}
               </div>
-
               <p className="text-gray-600 text-sm">
-                {rev.comment || "Nice product!"}
+                {rev.comment}
               </p>
             </div>
-          ))
-        ) : (
-          <p className="text-gray-500">No reviews available</p>
+          ))}
+        </div>
+
+        {/* ZOOM */}
+        {zoom && (
+          <div
+            className="fixed inset-0 bg-black/80 flex items-center justify-center"
+            onClick={() => setZoom(null)}
+          >
+            <img
+              src={zoom}
+              alt="zoom"
+              className="max-w-[90%] max-h-[90%]"
+            />
+          </div>
         )}
       </div>
-
-      {/* 🔍 ZOOM IMAGE */}
-      {zoom && (
-        <div
-          className="fixed inset-0 bg-black/80 flex items-center justify-center"
-          onClick={() => setZoom(null)}
-        >
-          <img
-            src={zoom}
-            alt="zoom"
-            className="max-w-[90%] max-h-[90%]"
-          />
-        </div>
-      )}
-    </div>
+    </>
   );
 };
 
