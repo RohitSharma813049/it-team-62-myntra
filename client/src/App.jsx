@@ -4,28 +4,28 @@ import { useSelector } from "react-redux";
 
 import Layout from "./Pages/Layout";
 import Layoutsdashboard from "./Pages/Layoutsdashboard";
-import ProductPage from "./Pages/Productpage";
-
-import Coupons from "./components/Account/Coupons";
-import SavedVPA from "./components/Account/SavedVPA";
-import SavedCards from "./components/Account/SavedCards";
-import SavedAddress from "./components/Account/Savedaddress";
-import Cart from "./components/Account/Carts";
-import SearchPage from "./Pages/SearchPage";
-import BeautyPage from "./Pages/Beautypage"
-import OffersPage from "./Pages/Offerpage"
 import AccountLayout from "./Pages/AccountLayout";
+import StructureLoader from "./components/Loader/SkalatenLoader";
 
-// Lazy imports
+// 🔥 ALL LAZY IMPORTS
 const Home = lazy(() => import("./Pages/Home"));
 const Login = lazy(() => import("./components/Authpage/Authpage"));
+const ProductPage = lazy(() => import("./Pages/Productpage"));
+const SearchPage = lazy(() => import("./Pages/SearchPage"));
+const BeautyPage = lazy(() => import("./Pages/Beautypage"));
+const OffersPage = lazy(() => import("./Pages/Offerpage"));
 
 const Overview = lazy(() => import("./components/Account/Overview"));
 const Orders = lazy(() => import("./components/Account/Orders"));
 const Wishlist = lazy(() => import("./components/Account/Wishlist"));
 const Profile = lazy(() => import("./components/Account/Profile"));
+const Coupons = lazy(() => import("./components/Account/Coupons"));
+const SavedVPA = lazy(() => import("./components/Account/SavedVPA"));
+const SavedCards = lazy(() => import("./components/Account/SavedCards"));
+const SavedAddress = lazy(() => import("./components/Account/Savedaddress"));
+const Cart = lazy(() => import("./components/Account/Carts"));
 
-const Loader = () => <div>Loading...</div>;
+const Loader = () => <StructureLoader/>;
 
 // 🔒 Private Route
 const PrivateRoute = ({ children }) => {
