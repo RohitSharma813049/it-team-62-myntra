@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { CiUser } from "react-icons/ci";
 import { useSelector, useDispatch } from "react-redux";
 import { logout } from "../../../store/Slice/AuthSlice";
@@ -11,11 +11,32 @@ const DesktopProfile = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const dropdownRef = useRef();
+
+  // CLOSE ON OUTSIDE CLICK
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setIsProfileOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const handleLogout = () => {
+    dispatch(logout());
+    setIsProfileOpen(false);
+    navigate("/login");
+  };
+
   const handleClick = () => setIsProfileOpen(false);
 
   return (
     <div
       className="relative"
+      ref={dropdownRef}
       onMouseEnter={() => setIsProfileOpen(true)}
       onMouseLeave={() => setIsProfileOpen(false)}
     >
@@ -46,21 +67,9 @@ const DesktopProfile = () => {
               <hr className="my-3" />
 
               <ul className="space-y-2 text-sm text-gray-700">
-                <li>
-                  <Link to="/account/orders" onClick={handleClick}>
-                    Orders
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/account/wishlist" onClick={handleClick}>
-                    Wishlist
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/account/coupons" onClick={handleClick}>
-                    Coupons
-                  </Link>
-                </li>
+                <li><Link to="/account/orders" onClick={handleClick}>Orders</Link></li>
+                <li><Link to="/account/wishlist" onClick={handleClick}>Wishlist</Link></li>
+                <li><Link to="/account/coupons" onClick={handleClick}>Coupons</Link></li>
               </ul>
             </>
           )}
@@ -69,51 +78,24 @@ const DesktopProfile = () => {
           {user && (
             <>
               <h3 className="font-semibold text-sm">
-                Hello, {user?.input || "User"}
+                Hello, {user?.name || user?.email || "User"}
               </h3>
 
               <hr className="my-3" />
 
               <ul className="space-y-2 text-sm text-gray-700">
-                <li>
-                  <Link to="/account/orders" onClick={handleClick}>
-                    Orders
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/account/wishlist" onClick={handleClick}>
-                    Wishlist
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/account/coupons" onClick={handleClick}>
-                    Coupons
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/account/cards" onClick={handleClick}>
-                    Saved Cards
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/account/vpa" onClick={handleClick}>
-                    Saved VPA
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/account/address" onClick={handleClick}>
-                    Saved Addresses
-                  </Link>
-                </li>
+                <li><Link to="/account/orders" onClick={handleClick}>Orders</Link></li>
+                <li><Link to="/account/wishlist" onClick={handleClick}>Wishlist</Link></li>
+                <li><Link to="/account/coupons" onClick={handleClick}>Coupons</Link></li>
+                <li><Link to="/account/cards" onClick={handleClick}>Saved Cards</Link></li>
+                <li><Link to="/account/vpa" onClick={handleClick}>Saved VPA</Link></li>
+                <li><Link to="/account/address" onClick={handleClick}>Saved Addresses</Link></li>
               </ul>
 
               <hr className="my-3" />
 
               <button
-                onClick={() => {
-                  dispatch(logout());
-                  navigate("/login"); // redirect after logout
-                }}
+                onClick={handleLogout}
                 className="w-full text-left text-sm text-red-500 hover:underline"
               >
                 Logout

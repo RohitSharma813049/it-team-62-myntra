@@ -5,18 +5,20 @@ import { MdOutlineLocalOffer } from "react-icons/md";
 import { GiLipstick } from "react-icons/gi";
 
 const MobileBottomNav = () => {
+  const navItem =
+    "flex flex-col items-center text-[11px] transition-all duration-200 active:scale-90";
 
-  const navItem = "flex flex-col items-center text-xs";
-  const active = "text-pink-500";
+  const active = "text-pink-500 font-medium";
   const inactive = "text-gray-600";
 
   return (
-    <nav className="fixed bottom-0 left-0 w-full bg-white shadow-md z-50 border-t">
+    <nav className="fixed bottom-0 left-0 w-full bg-white shadow-md z-50 border-t pb-[env(safe-area-inset-bottom)]">
       <div className="flex justify-around items-center h-16">
 
         {/* HOME */}
         <NavLink
           to="/"
+          aria-label="Home"
           className={({ isActive }) =>
             `${navItem} ${isActive ? active : inactive}`
           }
@@ -25,9 +27,10 @@ const MobileBottomNav = () => {
           <span>Home</span>
         </NavLink>
 
-        {/* UNDER 999 */}
+        {/* OFFERS */}
         <NavLink
           to="/offers"
+          aria-label="Offers"
           className={({ isActive }) =>
             `${navItem} ${isActive ? active : inactive}`
           }
@@ -39,6 +42,7 @@ const MobileBottomNav = () => {
         {/* BEAUTY */}
         <NavLink
           to="/beauty"
+          aria-label="Beauty"
           className={({ isActive }) =>
             `${navItem} ${isActive ? active : inactive}`
           }
@@ -50,6 +54,7 @@ const MobileBottomNav = () => {
         {/* PROFILE */}
         <NavLink
           to="/account"
+          aria-label="Profile"
           className={({ isActive }) =>
             `${navItem} ${isActive ? active : inactive}`
           }

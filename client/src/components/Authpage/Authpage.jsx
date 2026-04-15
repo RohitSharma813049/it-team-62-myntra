@@ -15,80 +15,85 @@ const AuthPage = () => {
 
   const [otp, setOtp] = useState("");
 
-  //  Redirect if already logged in
   useEffect(() => {
-    if (user) {
-      navigate("/");
-    }
+    if (user) navigate("/");
   }, [user, navigate]);
 
-  //  Prevent UI flash
   if (user) return null;
 
   return (
-    <div className="p-6">
+    <div className=" flex items-center justify-center px-4">
 
-      <h2 className="text-xl font-semibold mb-4">
-        {step === 1 ? "Login or Signup" : "OTP Verification"}
-      </h2>
+      <div className="w-full max-w-sm bg-white p-6 rounded-xl">
 
-      {step === 1 && (
-        <>
-          <p className="text-sm text-gray-600 mb-4">
-            Enter mobile number or email
-          </p>
+        {/* TITLE */}
+        <h2 className="text-xl font-semibold mb-2 text-center">
+          {step === 1 ? "Login or Signup" : "OTP Verification"}
+        </h2>
 
-          <input
-            type="text"
-            placeholder="Mobile number / Email"
-            value={input}
-            onChange={(e) => dispatch(setInput(e.target.value))}
-            className="w-full border border-gray-300 p-3 rounded mb-4 focus:outline-none focus:border-pink-500"
-          />
+        <p className="text-sm text-gray-500 mb-6 text-center">
+          {step === 1
+            ? "Enter mobile number or email"
+            : `OTP sent to ${input}`}
+        </p>
 
-          <button
-            onClick={() => dispatch(generateOtp())}
-            className="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded font-semibold"
-          >
-            CONTINUE
-          </button>
-        </>
-      )}
+        {/* STEP 1 */}
+        {step === 1 && (
+          <>
+            <input
+              type="text"
+              placeholder="Mobile number / Email"
+              value={input}
+              onChange={(e) => dispatch(setInput(e.target.value))}
+              className="w-full border border-gray-300 p-3 rounded-lg mb-4 
+              focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
+            />
 
-      {step === 2 && (
-        <>
-          <p className="text-sm text-gray-600 mb-4">
-            OTP sent to <span className="font-semibold">{input}</span>
-          </p>
+            <button
+              onClick={() => dispatch(generateOtp())}
+              className="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-lg font-semibold transition duration-200"
+            >
+              CONTINUE
+            </button>
+          </>
+        )}
 
-          <input
-            type="text"
-            placeholder="Enter OTP"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            className="w-full border border-gray-300 p-3 rounded mb-4 focus:outline-none focus:border-pink-500"
-          />
+        {/* STEP 2 */}
+        {step === 2 && (
+          <>
+            <input
+              type="text"
+              placeholder="Enter OTP"
+              value={otp}
+              maxLength={4}
+              onChange={(e) => setOtp(e.target.value)}
+              className="w-full border border-gray-300 p-3 rounded-lg mb-4 
+              text-center tracking-widest text-lg
+              focus:outline-none focus:ring-2 focus:ring-pink-400 transition"
+            />
 
-          <button
-            onClick={() => dispatch(verifyOtp(otp))}
-            className="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded font-semibold"
-          >
-            VERIFY
-          </button>
+            <button
+              onClick={() => dispatch(verifyOtp(otp))}
+              className="w-full bg-pink-500 hover:bg-pink-600 text-white py-3 rounded-lg font-semibold transition duration-200"
+            >
+              VERIFY
+            </button>
 
-          <p
-            onClick={() => dispatch(generateOtp())}
-            className="text-pink-500 text-sm mt-3 cursor-pointer"
-          >
-            Resend OTP
-          </p>
-        </>
-      )}
+            <p
+              onClick={() => dispatch(generateOtp())}
+              className="text-pink-500 text-sm mt-4 text-center cursor-pointer hover:underline"
+            >
+              Resend OTP
+            </p>
+          </>
+        )}
 
-      <p className="text-xs text-gray-500 mt-6">
-        By continuing, you agree to Terms of Use & Privacy Policy
-      </p>
+        {/* FOOTER */}
+        <p className="text-xs text-gray-400 mt-6 text-center">
+          By continuing, you agree to Terms of Use & Privacy Policy
+        </p>
 
+      </div>
     </div>
   );
 };

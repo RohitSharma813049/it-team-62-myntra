@@ -15,7 +15,7 @@ const Destopcatogery = () => {
 
   return (
     <ul className="hidden md:flex gap-2 font-bold text-sm text-gray-700">
-      {categoriesData.map((item, catIndex) => {
+      {categoriesData?.map((item, catIndex) => {
         const color = categoryColors[catIndex % categoryColors.length];
 
         return (
@@ -36,39 +36,47 @@ const Destopcatogery = () => {
               {item.name}
             </span>
 
-            {/* MEGA MENU */}
-            <div className="fixed inset-x-0 top-16 hidden group-hover:flex justify-center z-50">
-              <div className="bg-white shadow-2xl rounded-xl w-[1150px] max-w-[90vw] px-6 py-4 border border-gray-100">
+            {/* MEGA MENU (FIXED HOVER GAP ISSUE) */}
+            {item?.sections?.length > 0 && (
+              <div
+                className="
+                  fixed inset-x-0 top-16
+                  hidden group-hover:flex justify-center
+                  z-50 pt-2
+                "
+              >
+                <div className="bg-white shadow-2xl rounded-xl w-[1150px] max-w-[90vw] px-6 py-4 border border-gray-100">
 
-                <div className="grid grid-cols-5 gap-x-10 gap-y-6">
+                  <div className="grid grid-cols-5 gap-x-10 gap-y-6">
 
-                  {item.sections.map((section, index) => (
-                    <div key={index}>
-                      <h4 className={`font-semibold mb-3 text-sm ${color.text}`}>
-                        {section.title}
-                      </h4>
+                    {item.sections.map((section, index) => (
+                      <div key={`${item.id}-${index}`}>
+                        <h4 className={`font-semibold mb-3 text-sm ${color.text}`}>
+                          {section.title}
+                        </h4>
 
-                      <ul className="space-y-[6px]">
-                        {section.items.map((subItem, i) => (
-                          <li
-                            key={i}
-                            onClick={() =>
-                              navigate(
-                                `/search?query=${encodeURIComponent(subItem)}`
-                              )
-                            }
-                            className="text-gray-600 text-sm hover:text-black cursor-pointer hover:font-bold"
-                          >
-                            {subItem}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  ))}
+                        <ul className="space-y-[6px]">
+                          {section.items?.map((subItem, i) => (
+                            <li
+                              key={`${section.title}-${i}`}
+                              onClick={() =>
+                                navigate(
+                                  `/search?query=${encodeURIComponent(subItem)}`
+                                )
+                              }
+                              className="text-gray-600 text-sm hover:text-black cursor-pointer hover:font-bold"
+                            >
+                              {subItem}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
 
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
           </li>
         );

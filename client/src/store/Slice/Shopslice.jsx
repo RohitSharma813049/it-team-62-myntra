@@ -1,25 +1,29 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+/* ---------------- SAFE LOAD ---------------- */
 const load = (key) => {
   try {
-    return JSON.parse(localStorage.getItem(key)) || [];
+    const data = JSON.parse(localStorage.getItem(key));
+    return Array.isArray(data) ? data : [];
   } catch {
     return [];
   }
 };
 
+/* ---------------- INITIAL STATE ---------------- */
 const initialState = {
   cart: load("cart"),
   wishlist: load("wishlist"),
   orders: load("orders"),
 };
 
+/* ---------------- SLICE ---------------- */
 const shopSlice = createSlice({
   name: "shop",
   initialState,
 
   reducers: {
-    // 🛒 ADD TO CART
+    /* ---------------- CART ---------------- */
     addToCart: (state, action) => {
       const item = action.payload;
 
@@ -30,14 +34,13 @@ const shopSlice = createSlice({
       } else {
         state.cart.push({
           ...item,
-          qty: item.qty || 1,
+          qty: 1, // 🔥 always start safe
         });
       }
 
       localStorage.setItem("cart", JSON.stringify(state.cart));
     },
 
-    // ➖ DECREASE QTY
     decreaseQty: (state, action) => {
       const item = state.cart.find((p) => p.id === action.payload);
 
@@ -54,7 +57,6 @@ const shopSlice = createSlice({
       localStorage.setItem("cart", JSON.stringify(state.cart));
     },
 
-    // ❌ REMOVE FROM CART (FIXED POSITION)
     removeFromCart: (state, action) => {
       state.cart = state.cart.filter(
         (item) => item.id !== action.payload
@@ -63,7 +65,7 @@ const shopSlice = createSlice({
       localStorage.setItem("cart", JSON.stringify(state.cart));
     },
 
-    // 💖 WISHLIST
+    /* ---------------- WISHLIST ---------------- */
     toggleWishlist: (state, action) => {
       const item = action.payload;
 
@@ -83,18 +85,21 @@ const shopSlice = createSlice({
       );
     },
 
-    // 💳 PLACE ORDER
+    /* ---------------- ORDERS ---------------- */
     placeOrder: (state) => {
-      if (state.cart.length === 0) return;
+      if (!state.cart.length) return;
 
       const newOrder = {
         id: Date.now(),
-        items: JSON.parse(JSON.stringify(state.cart)),
+        items: structuredClone
+          ? structuredClone(state.cart)
+          : JSON.parse(JSON.stringify(state.cart)),
         date: new Date().toLocaleString(),
         status: "Placed",
       };
 
       state.orders.unshift(newOrder);
+
       state.cart = [];
 
       localStorage.setItem("orders", JSON.stringify(state.orders));
@@ -103,6 +108,7 @@ const shopSlice = createSlice({
   },
 });
 
+/* ---------------- EXPORTS ---------------- */
 export const {
   addToCart,
   decreaseQty,

@@ -1,7 +1,20 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+/* ---------------- SAFE USER HELPER ---------------- */
+const safeUser = (user) => ({
+  ...user,
+  wishlist: user?.wishlist || [],
+  cart: user?.cart || [],
+  address: user?.address || [],
+  orders: user?.orders || [],
+});
+
+/* ---------------- INITIAL STATE ---------------- */
 const initialState = {
-  user: JSON.parse(localStorage.getItem("user")) || null,
+  user: JSON.parse(localStorage.getItem("user"))
+    ? safeUser(JSON.parse(localStorage.getItem("user")))
+    : null,
+
   token: localStorage.getItem("token") || null,
 
   step: 1,
@@ -9,17 +22,18 @@ const initialState = {
   generatedOtp: "",
 };
 
+/* ---------------- SLICE ---------------- */
 const AuthSlice = createSlice({
   name: "auth",
   initialState,
 
   reducers: {
-    // INPUT HANDLE
+    /* ---------------- INPUT ---------------- */
     setInput: (state, action) => {
       state.input = action.payload;
     },
 
-    // GENERATE OTP
+    /* ---------------- OTP GENERATE ---------------- */
     generateOtp: (state) => {
       const otp = Math.floor(1000 + Math.random() * 9000).toString();
       state.generatedOtp = otp;
@@ -28,7 +42,7 @@ const AuthSlice = createSlice({
       alert("Fake OTP: " + otp);
     },
 
-    // VERIFY OTP + LOGIN/SIGNUP
+    /* ---------------- VERIFY OTP ---------------- */
     verifyOtp: (state, action) => {
       if (action.payload !== state.generatedOtp) {
         alert("Wrong OTP");
@@ -45,7 +59,6 @@ const AuthSlice = createSlice({
 
       if (existingUser) {
         loggedUser = existingUser;
-        alert("Login Successful ✅");
       } else {
         loggedUser = {
           id: Date.now(),
@@ -61,22 +74,20 @@ const AuthSlice = createSlice({
 
         users.push(loggedUser);
         localStorage.setItem("users", JSON.stringify(users));
-
-        alert("Account Created 🎉");
       }
 
-      // SAVE SESSION
-      state.user = loggedUser;
+      state.user = safeUser(loggedUser);
       state.token = "fake-jwt-token";
 
-      localStorage.setItem("user", JSON.stringify(loggedUser));
-      localStorage.setItem("token", "fake-jwt-token");
+      localStorage.setItem("user", JSON.stringify(state.user));
+      localStorage.setItem("token", state.token);
 
       state.step = 1;
       state.input = "";
+      state.generatedOtp = "";
     },
 
-    // LOGOUT
+    /* ---------------- LOGOUT ---------------- */
     logout: (state) => {
       state.user = null;
       state.token = null;
@@ -85,9 +96,23 @@ const AuthSlice = createSlice({
       localStorage.removeItem("token");
     },
 
-    // 💖 ADD TO WISHLIST (GLOBAL)
+    /* ---------------- UPDATE USER (🔥 FIX ADDED) ---------------- */
+    updateUser: (state, action) => {
+      if (!state.user) return;
+
+      state.user = safeUser({
+        ...state.user,
+        ...action.payload,
+      });
+
+      localStorage.setItem("user", JSON.stringify(state.user));
+    },
+
+    /* ---------------- WISHLIST ---------------- */
     addToWishlist: (state, action) => {
       if (!state.user) return;
+
+      state.user = safeUser(state.user);
 
       const exists = state.user.wishlist.find(
         (item) => item.id === action.payload.id
@@ -102,6 +127,8 @@ const AuthSlice = createSlice({
     removeFromWishlist: (state, action) => {
       if (!state.user) return;
 
+      state.user = safeUser(state.user);
+
       state.user.wishlist = state.user.wishlist.filter(
         (item) => item.id !== action.payload
       );
@@ -109,9 +136,11 @@ const AuthSlice = createSlice({
       localStorage.setItem("user", JSON.stringify(state.user));
     },
 
-    // 🛒 ADD TO CART (GLOBAL)
+    /* ---------------- CART ---------------- */
     addToCart: (state, action) => {
       if (!state.user) return;
+
+      state.user = safeUser(state.user);
 
       const exists = state.user.cart.find(
         (item) => item.id === action.payload.id
@@ -133,6 +162,8 @@ const AuthSlice = createSlice({
     removeFromCart: (state, action) => {
       if (!state.user) return;
 
+      state.user = safeUser(state.user);
+
       state.user.cart = state.user.cart.filter(
         (item) => item.id !== action.payload
       );
@@ -142,11 +173,13 @@ const AuthSlice = createSlice({
   },
 });
 
+/* ---------------- EXPORTS ---------------- */
 export const {
   setInput,
   generateOtp,
   verifyOtp,
   logout,
+  updateUser, // 🔥 IMPORTANT FIX
   addToWishlist,
   removeFromWishlist,
   addToCart,

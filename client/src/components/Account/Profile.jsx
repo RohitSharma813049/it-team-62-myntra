@@ -1,22 +1,38 @@
-import React, { useState } from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { updateUser } from "../../store/Slice/AuthSlice";
 
 const Profile = () => {
   const user = useSelector((state) => state.auth.user);
+  const dispatch = useDispatch();
 
   const [editMode, setEditMode] = useState(false);
-  const [name, setName] = useState(user?.name || "User");
-  const [email, setEmail] = useState(user?.emailOrPhone || "");
+  const [message, setMessage] = useState("");
 
-  const [address, setAddress] = useState(
-    user?.address?.[0] || {
-      house: "",
-      street: "",
-      city: "",
-      state: "",
-      pincode: "",
-    }
-  );
+  const defaultAddress = {
+    house: "",
+    street: "",
+    city: "",
+    state: "",
+    pincode: "",
+  };
+
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    address: defaultAddress,
+  });
+
+  /* 🔥 SYNC USER → FORM */
+  useEffect(() => {
+    if (!user) return;
+
+    setFormData({
+      name: user.name || "User",
+      email: user.emailOrPhone || "",
+      address: user.address?.[0] || defaultAddress,
+    });
+  }, [user]);
 
   if (!user) {
     return (
@@ -26,106 +42,121 @@ const Profile = () => {
     );
   }
 
+  const showMessage = (msg) => {
+    setMessage(msg);
+    setTimeout(() => setMessage(""), 2000);
+  };
+
+  const handleSave = () => {
+    if (!formData.name || !formData.email) {
+      showMessage("Please fill required fields");
+      return;
+    }
+
+    const updatedUser = {
+      ...user,
+      name: formData.name,
+      emailOrPhone: formData.email,
+      address: [formData.address],
+    };
+
+    dispatch(updateUser(updatedUser));
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+
+    setEditMode(false);
+    showMessage("Profile updated successfully ✅");
+  };
+
+  const handleCancel = () => {
+    setEditMode(false);
+
+    setFormData({
+      name: user?.name || "",
+      email: user?.emailOrPhone || "",
+      address: user?.address?.[0] || defaultAddress,
+    });
+  };
+
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-6">
 
       {/* TITLE */}
-      <h2 className="text-2xl font-bold">
-        👤 My Profile
-      </h2>
+      <h2 className="text-2xl font-bold">👤 My Profile</h2>
 
-      {/* PROFILE CARD */}
+      {/* MESSAGE */}
+      {message && (
+        <div className="p-3 rounded bg-green-100 text-green-700 border">
+          {message}
+        </div>
+      )}
+
+      {/* CARD */}
       <div className="bg-white shadow rounded-lg p-6 space-y-4">
 
         {/* NAME */}
         <div>
           <label className="text-sm text-gray-500">Name</label>
+
           {editMode ? (
             <input
               className="border p-2 rounded w-full"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={formData.name}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
             />
           ) : (
-            <p className="font-semibold">{name}</p>
+            <p className="font-semibold">{formData.name}</p>
           )}
         </div>
 
         {/* EMAIL */}
         <div>
           <label className="text-sm text-gray-500">Email / Phone</label>
+
           {editMode ? (
             <input
               className="border p-2 rounded w-full"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={formData.email}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
             />
           ) : (
-            <p className="font-semibold">{email}</p>
+            <p className="font-semibold">{formData.email}</p>
           )}
         </div>
 
-        {/* 🚚 ADDRESS SECTION */}
+        {/* ADDRESS */}
         <div className="border-t pt-4">
           <h3 className="font-bold mb-2">🏠 Address</h3>
 
           <div className="grid md:grid-cols-2 gap-3">
-
-            <input
-              placeholder="House No"
-              className="border p-2 rounded"
-              value={address.house}
-              onChange={(e) =>
-                setAddress({ ...address, house: e.target.value })
-              }
-              disabled={!editMode}
-            />
-
-            <input
-              placeholder="Street"
-              className="border p-2 rounded"
-              value={address.street}
-              onChange={(e) =>
-                setAddress({ ...address, street: e.target.value })
-              }
-              disabled={!editMode}
-            />
-
-            <input
-              placeholder="City"
-              className="border p-2 rounded"
-              value={address.city}
-              onChange={(e) =>
-                setAddress({ ...address, city: e.target.value })
-              }
-              disabled={!editMode}
-            />
-
-            <input
-              placeholder="State"
-              className="border p-2 rounded"
-              value={address.state}
-              onChange={(e) =>
-                setAddress({ ...address, state: e.target.value })
-              }
-              disabled={!editMode}
-            />
-
-            <input
-              placeholder="Pincode"
-              className="border p-2 rounded md:col-span-2"
-              value={address.pincode}
-              onChange={(e) =>
-                setAddress({ ...address, pincode: e.target.value })
-              }
-              disabled={!editMode}
-            />
+            {Object.keys(defaultAddress).map((key) => (
+              <input
+                key={key}
+                placeholder={key}
+                className={`border p-2 rounded ${
+                  key === "pincode" ? "md:col-span-2" : ""
+                }`}
+                value={formData.address?.[key] || ""}
+                disabled={!editMode}
+                onChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    address: {
+                      ...formData.address,
+                      [key]: e.target.value,
+                    },
+                  })
+                }
+              />
+            ))}
           </div>
         </div>
 
         {/* BUTTONS */}
         <div className="flex gap-3 pt-4">
-
           {!editMode ? (
             <button
               onClick={() => setEditMode(true)}
@@ -136,29 +167,14 @@ const Profile = () => {
           ) : (
             <>
               <button
-                onClick={() => {
-                  setEditMode(false);
-
-                  // ⚡ save to localStorage (simple version)
-                  const updatedUser = {
-                    ...user,
-                    name,
-                    emailOrPhone: email,
-                    address: [address],
-                  };
-
-                  localStorage.setItem(
-                    "user",
-                    JSON.stringify(updatedUser)
-                  );
-                }}
+                onClick={handleSave}
                 className="bg-green-600 text-white px-4 py-2 rounded"
               >
                 Save
               </button>
 
               <button
-                onClick={() => setEditMode(false)}
+                onClick={handleCancel}
                 className="border px-4 py-2 rounded"
               >
                 Cancel
@@ -166,6 +182,7 @@ const Profile = () => {
             </>
           )}
         </div>
+
       </div>
     </div>
   );

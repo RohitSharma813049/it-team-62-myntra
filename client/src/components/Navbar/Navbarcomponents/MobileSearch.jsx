@@ -11,7 +11,7 @@ const MobileSearch = () => {
 
   const navigate = useNavigate();
 
-  // 📦 STATIC SUGGESTIONS
+  // 📦 suggestions (static)
   const suggestions = useMemo(
     () => [
       { name: "T-Shirts", img: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab" },
@@ -22,22 +22,21 @@ const MobileSearch = () => {
     []
   );
 
-  // 🔥 REAL PRODUCT FILTER (IMPORTANT)
+  // 🔥 better filtering (memoized)
   const filteredProducts = useMemo(() => {
-    if (!query) return [];
+    if (!query.trim()) return [];
+
+    const q = query.toLowerCase();
 
     return products.filter((p) =>
-      p.name?.toLowerCase().includes(query.toLowerCase()) ||
-      p.brand?.toLowerCase().includes(query.toLowerCase()) ||
-      p.category?.toLowerCase().includes(query.toLowerCase()) ||
-      p.subCategory?.toLowerCase().includes(query.toLowerCase()) ||
-      p.tags?.some(tag =>
-        tag.toLowerCase().includes(query.toLowerCase())
-      )
+      [p.name, p.brand, p.category, p.subCategory]
+        .filter(Boolean)
+        .some((field) => field.toLowerCase().includes(q)) ||
+      p.tags?.some((tag) => tag.toLowerCase().includes(q))
     );
   }, [query]);
 
-  // ✍️ Typing placeholder
+  // ✍️ typing placeholder (safe cleanup)
   useEffect(() => {
     const texts = [
       "Search for products",
@@ -54,12 +53,12 @@ const MobileSearch = () => {
       const word = texts[i];
 
       if (!deleting) {
-        setPlaceholder(word.slice(0, char + 1));
         char++;
+        setPlaceholder(word.slice(0, char));
         if (char === word.length) deleting = true;
       } else {
-        setPlaceholder(word.slice(0, char - 1));
         char--;
+        setPlaceholder(word.slice(0, char));
         if (char === 0) {
           deleting = false;
           i = (i + 1) % texts.length;
@@ -70,21 +69,21 @@ const MobileSearch = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // ⚡ scroll hide
+  // 📜 scroll detection (optimized)
   useEffect(() => {
     const handleScroll = () => {
+      if (!openSearch) return;
       setHideSuggestions(window.scrollY > 100);
     };
 
     window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [openSearch]);
 
-  // 🔍 SEARCH SUBMIT
   const handleSearch = () => {
     if (!query.trim()) return;
 
-    navigate(`/search?query=${encodeURIComponent(query)}`);
+    navigate(`/search?query=${encodeURIComponent(query.trim())}`);
     setOpenSearch(false);
     setQuery("");
   };
@@ -108,7 +107,7 @@ const MobileSearch = () => {
           suggestions.map((item) => (
             <div
               key={item.name}
-              className="min-w-[70px] text-center flex flex-col items-center cursor-pointer"
+              className="min-w-[70px] text-center flex flex-col items-center cursor-pointer active:scale-95 transition"
               onClick={() => {
                 navigate(`/search?query=${item.name}`);
                 setOpenSearch(false);
@@ -126,6 +125,7 @@ const MobileSearch = () => {
       {/* 🔥 FULL SCREEN SEARCH */}
       {openSearch && (
         <div className="fixed inset-0 bg-white z-50 flex flex-col">
+          
           {/* INPUT */}
           <div className="flex items-center gap-3 p-4 border-b">
             <CiSearch className="text-xl" />
@@ -136,9 +136,7 @@ const MobileSearch = () => {
               onChange={(e) => setQuery(e.target.value)}
               placeholder={placeholder}
               className="w-full outline-none"
-              onKeyDown={(e) => {
-                if (e.key === "Enter") handleSearch();
-              }}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             />
 
             <button
@@ -153,11 +151,11 @@ const MobileSearch = () => {
           </div>
 
           {/* RESULTS */}
-          <div className="p-4 grid grid-cols-3 gap-4">
+          <div className="p-4 grid grid-cols-3 gap-4 overflow-y-auto">
             {filteredProducts.map((item) => (
               <div
                 key={item.id}
-                className="text-center cursor-pointer"
+                className="text-center cursor-pointer active:scale-95 transition"
                 onClick={() => {
                   navigate(`/product/${item.id}`);
                   setOpenSearch(false);

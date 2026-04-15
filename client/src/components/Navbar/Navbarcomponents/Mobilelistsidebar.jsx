@@ -10,12 +10,16 @@ const Mobilelistsidebar = () => {
 
   const navigate = useNavigate();
 
-  // 🔥 lock scroll when sidebar open
+  // 🔥 safer scroll lock
   useEffect(() => {
-    document.body.style.overflow = open ? "hidden" : "auto";
+    if (open) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
 
     return () => {
-      document.body.style.overflow = "auto";
+      document.body.style.overflow = "";
     };
   }, [open]);
 
@@ -37,12 +41,12 @@ const Mobilelistsidebar = () => {
       </div>
 
       {/* OVERLAY */}
-      {open && (
-        <div
-          className="fixed inset-0 bg-black/40 z-40"
-          onClick={closeSidebar}
-        />
-      )}
+      <div
+        className={`fixed inset-0 bg-black/40 z-40 transition-opacity duration-300 ${
+          open ? "opacity-100" : "opacity-0 pointer-events-none"
+        }`}
+        onClick={closeSidebar}
+      />
 
       {/* SIDEBAR */}
       <div
@@ -67,7 +71,7 @@ const Mobilelistsidebar = () => {
             {categoriesData.map((cat) => (
               <div
                 key={cat.id}
-                className="flex justify-between items-center cursor-pointer font-medium"
+                className="flex justify-between items-center cursor-pointer font-medium active:scale-95 transition"
                 onClick={() => setActiveCategory(cat)}
               >
                 {cat.name}
@@ -80,8 +84,10 @@ const Mobilelistsidebar = () => {
         {/* SUB CATEGORY ITEMS */}
         {activeCategory && (
           <div className="p-4 overflow-y-auto h-[calc(100%-60px)]">
+            
+            {/* BACK BUTTON */}
             <button
-              className="text-pink-500 mb-4 text-sm"
+              className="text-pink-500 mb-4 text-sm active:scale-95 transition"
               onClick={() => setActiveCategory(null)}
             >
               ← Back
@@ -97,7 +103,7 @@ const Mobilelistsidebar = () => {
                   {section.items?.map((item, j) => (
                     <div
                       key={j}
-                      className="text-sm cursor-pointer hover:text-pink-500"
+                      className="text-sm cursor-pointer hover:text-pink-500 active:scale-95 transition"
                       onClick={() => handleNavigate(item)}
                     >
                       {item}

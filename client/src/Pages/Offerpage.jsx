@@ -46,33 +46,47 @@ const offersData = [
 const OffersPage = () => {
   return (
     <div className="p-4 pb-20 bg-gray-50 min-h-screen">
+
       {/* HEADER */}
       <h2 className="text-xl font-bold mb-4">
         🔥 Under ₹999 Deals
       </h2>
 
       {/* GRID */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+
         {offersData.map((item) => (
           <div
             key={item.id}
-            className="bg-white rounded-lg shadow-sm overflow-hidden"
+            className="bg-white rounded-lg shadow-sm overflow-hidden cursor-pointer active:scale-95 transition hover:shadow-md"
           >
+
             {/* IMAGE */}
-            <img
-              src={item.image}
-              alt={item.name}
-              className="w-full h-36 object-cover"
-            />
+            <div className="relative">
+
+              <img
+                src={item.image}
+                alt={item.name}
+                className="w-full h-36 object-cover"
+              />
+
+              {/* DISCOUNT BADGE */}
+              <span className="absolute top-2 left-2 bg-pink-500 text-white text-xs px-2 py-1 rounded">
+                {item.discount}% OFF
+              </span>
+
+            </div>
 
             {/* DETAILS */}
             <div className="p-2 space-y-1">
+
               <p className="text-sm font-semibold truncate">
                 {item.name}
               </p>
 
               {/* PRICE */}
               <div className="flex gap-2 text-sm items-center">
+
                 <span className="font-bold text-black">
                   ₹{item.price}
                 </span>
@@ -81,13 +95,17 @@ const OffersPage = () => {
                   ₹{item.originalPrice}
                 </span>
 
-                <span className="text-pink-500 text-xs font-semibold">
-                  {item.discount}% OFF
-                </span>
               </div>
+
+              {/* CTA */}
+              <button className="w-full mt-2 text-xs bg-black text-white py-1 rounded hover:bg-gray-800 transition">
+                View Deal
+              </button>
+
             </div>
           </div>
         ))}
+
       </div>
     </div>
   );
