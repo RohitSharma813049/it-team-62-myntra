@@ -11,7 +11,7 @@ import SavedVPA from "./components/Account/SavedVPA";
 import SavedCards from "./components/Account/SavedCards";
 import SavedAddress from "./components/Account/Savedaddress";
 import Cart from "./components/Account/Carts";
-import SearchPage from "./Pages/Searchpage";
+import SearchPage from "./Pages/SearchPage";
 import BeautyPage from "./Pages/Beautypage"
 import OffersPage from "./Pages/Offerpage"
 
