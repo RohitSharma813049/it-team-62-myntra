@@ -47,7 +47,7 @@ const Footer = () => {
         <div className="md:grid md:grid-cols-4 gap-10">
 
           {/* ONLINE SHOPPING */}
-          <Section title="ONLINE SHOPPING" name="shop">
+          <section title="ONLINE SHOPPING" name="shop">
             <ul className="space-y-1">
               <li><Link to="/men" className="hover:text-black">Men</Link></li>
               <li><Link to="/women" className="hover:text-black">Women</Link></li>
@@ -58,10 +58,10 @@ const Footer = () => {
               <li><Link to="/gift-cards" className="hover:text-black">Gift Cards</Link></li>
               <li><Link to="/insider" className="hover:text-black">Myntra Insider</Link></li>
             </ul>
-          </Section>
+          </section>
 
           {/* USEFUL LINKS */}
-          <Section title="USEFUL LINKS" name="links">
+          <section title="USEFUL LINKS" name="links">
             <ul className="space-y-1">
               <li><Link to="/blog">Blog</Link></li>
               <li><Link to="/careers">Careers</Link></li>
@@ -71,10 +71,10 @@ const Footer = () => {
               <li><Link to="/cleartrip">Cleartrip</Link></li>
               <li><Link to="/global">Myntra Global</Link></li>
             </ul>
-          </Section>
+          </section>
 
           {/* CUSTOMER POLICIES */}
-          <Section title="CUSTOMER POLICIES" name="policy">
+          <section title="CUSTOMER POLICIES" name="policy">
             <ul className="space-y-1">
               <li><Link to="/contact">Contact Us</Link></li>
               <li><Link to="/faq">FAQ</Link></li>
@@ -86,7 +86,7 @@ const Footer = () => {
               <li><Link to="/privacy">Privacy Policy</Link></li>
               <li><Link to="/grievance">Grievance Redressal</Link></li>
             </ul>
-          </Section>
+          </section>
 
           {/* APP + SOCIAL */}
           <div>
