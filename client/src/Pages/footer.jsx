@@ -39,7 +39,7 @@ const Footer = () => {
   );
 
   return (
-    <footer className="bg-gray-100 text-gray-700 mt-10">
+    <footer className="bg-gray-100 text-gray-700 pt-10 border-t">
 
       <div className="max-w-[1200px] mx-auto px-4 py-10">
 
