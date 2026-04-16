@@ -4,7 +4,7 @@ const SkeletonSlider = ({ count = 6 }) => {
   return (
     <div className="px-4 py-6">
       {/* Title Skeleton */}
-      <div className="h-5 w-1/3 max-w-[160px] bg-gray-200 rounded mb-4 animate-pulse"></div>
+      <div className="w-full aspect-[3/4] animate-shimmer rounded-lg"></div>
 
       {/* Slider */}
       <div className="flex gap-4 overflow-x-auto scrollbar-hide">
