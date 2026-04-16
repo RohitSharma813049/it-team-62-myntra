@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 
 import StructureLoader from "./components/Loader/SkalatenLoader";
 
-//  Lazy EVERYTHING (except loader)
+/* Lazy imports */
 const Layout = lazy(() => import("./Pages/Layout"));
 const Layoutsdashboard = lazy(() => import("./Pages/Layoutsdashboard"));
 const AccountLayout = lazy(() => import("./Pages/AccountLayout"));
@@ -28,13 +28,13 @@ const Cart = lazy(() => import("./components/Account/Carts"));
 
 const Loader = () => <StructureLoader />;
 
-//  Private Route
+/* Private Route */
 const PrivateRoute = ({ children }) => {
   const user = useSelector((state) => state.auth.user);
   return user ? children : <Navigate to="/login" replace />;
 };
 
-//  Public Route
+/* Public Route */
 const PublicRoute = ({ children }) => {
   const user = useSelector((state) => state.auth.user);
   return user ? <Navigate to="/" replace /> : children;
@@ -42,106 +42,56 @@ const PublicRoute = ({ children }) => {
 
 function App() {
   return (
-    <Routes>
+    <Suspense fallback={<Loader />}>
+      <Routes>
 
-      {/*  HOME */}
-      <Route
-        path="/"
-        element={
-          <Suspense fallback={<Loader />}>
-            <Layout />
-          </Suspense>
-        }
-      >
-        <Route
-          index
-          element={
-            <Suspense fallback={<Loader />}>
-              <Home />
-            </Suspense>
-          }
-        />
+        {/* HOME */}
+        <Route path="/" element={<Layout />}>
+          <Route index element={<Home />} />
+          <Route path="offers" element={<OffersPage />} />
+          <Route path="beauty" element={<BeautyPage />} />
+          <Route path="search" element={<SearchPage />} />
+          <Route path="product/:id" element={<ProductPage />} />
 
-        <Route
-          path="offers"
-          element={
-            <Suspense fallback={<Loader />}>
-              <OffersPage />
-            </Suspense>
-          }
-        />
-
-        <Route
-          path="beauty"
-          element={
-            <Suspense fallback={<Loader />}>
-              <BeautyPage />
-            </Suspense>
-          }
-        />
-
-        <Route
-          path="search"
-          element={
-            <Suspense fallback={<Loader />}>
-              <SearchPage />
-            </Suspense>
-          }
-        />
-
-        {/*  PRODUCT */}
-        <Route
-          path="product/:id"
-          element={
-            <Suspense fallback={<Loader />}>
-              <ProductPage />
-            </Suspense>
-          }
-        />
-
-        {/*  LOGIN */}
-        <Route element={<AccountLayout />}>
-          <Route
-            path="login"
-            element={
-              <PublicRoute>
-                <Suspense fallback={<Loader />}>
+          {/* LOGIN */}
+          <Route element={<AccountLayout />}>
+            <Route
+              path="login"
+              element={
+                <PublicRoute>
                   <Login />
-                </Suspense>
-              </PublicRoute>
-            }
-          />
-        </Route>
+                </PublicRoute>
+              }
+            />
+          </Route>
 
-        {/*  DASHBOARD */}
-        <Route
-          path="account"
-          element={
-            <PrivateRoute>
-              <Suspense fallback={<Loader />}>
+          {/* DASHBOARD */}
+          <Route
+            path="account"
+            element={
+              <PrivateRoute>
                 <Layoutsdashboard />
-              </Suspense>
-            </PrivateRoute>
-          }
-        >
-          <Route index element={<Overview />} />
-          <Route path="orders" element={<Orders />} />
-          <Route path="wishlist" element={<Wishlist />} />
-          <Route path="profile" element={<Profile />} />
-          <Route path="coupons" element={<Coupons />} />
-          <Route path="vpa" element={<SavedVPA />} />
-          <Route path="cards" element={<SavedCards />} />
-          <Route path="address" element={<SavedAddress />} />
-          <Route path="cart" element={<Cart />} />
+              </PrivateRoute>
+            }
+          >
+            <Route index element={<Overview />} />
+            <Route path="orders" element={<Orders />} />
+            <Route path="wishlist" element={<Wishlist />} />
+            <Route path="profile" element={<Profile />} />
+            <Route path="coupons" element={<Coupons />} />
+            <Route path="vpa" element={<SavedVPA />} />
+            <Route path="cards" element={<SavedCards />} />
+            <Route path="address" element={<SavedAddress />} />
+            <Route path="cart" element={<Cart />} />
+          </Route>
         </Route>
 
-      </Route>
+        {/* 404 */}
+        <Route path="*" element={<h1>404 Not Found</h1>} />
 
-      {/* 404 */}
-      <Route path="*" element={<h1>404 Not Found</h1>} />
-
-    </Routes>
+      </Routes>
+    </Suspense>
   );
 }
 
-export default App; 
+export default App;
