@@ -1,8 +1,6 @@
-
 import React, { useState, useEffect } from "react";
 
-/* 🔥 USE LOCAL IMAGES (IMPORTANT) */
-import banner1 from "../../../assets/banner1.jpg";
+/* Other banners (can stay in assets) */
 import banner2 from "../../../assets/banner2.jpg";
 import banner3 from "../../../assets/banner3.jpg";
 
@@ -10,7 +8,7 @@ const HeroSlider = () => {
   const slides = [
     {
       id: 1,
-      img: banner1,
+      img: "/images/banner1.jpg", // 🔥 LCP image from public
       title: "U.S. POLO ASSN.",
       subtitle: "Up to 50% Off",
     },
@@ -30,14 +28,16 @@ const HeroSlider = () => {
 
   const [current, setCurrent] = useState(0);
 
-  /* ❌ REMOVED 1500ms DELAY */
-
+  /* ✅ Smooth auto-slide */
   useEffect(() => {
+    if (slides.length <= 1) return;
+
     const interval = setInterval(() => {
       setCurrent((prev) => (prev + 1) % slides.length);
     }, 4000);
+
     return () => clearInterval(interval);
-  }, []);
+  }, [slides.length]);
 
   const prevSlide = () => {
     setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
@@ -50,25 +50,26 @@ const HeroSlider = () => {
   return (
     <div className="relative w-full overflow-hidden group">
 
-      {/* 🔥 ONLY RENDER CURRENT SLIDE */}
+      {/* ✅ FIXED HEIGHT (prevents CLS) */}
       <div className="relative w-full aspect-[16/6]">
 
+        {/* 🔥 FINAL LCP OPTIMIZED IMAGE */}
         <img
           src={slides[current].img}
           alt={slides[current].title}
           className="w-full h-full object-cover"
-          fetchPriority="high"
           loading="eager"
+          fetchPriority="high"
           decoding="async"
           width="1200"
           height="450"
         />
 
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent" />
+        {/* ✅ Overlay (safe, no LCP issue) */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent pointer-events-none" />
 
-        {/* Text */}
-        <div className="absolute left-10 top-1/2 -translate-y-1/2 text-white max-w-md">
+        {/* ✅ Text */}
+        <div className="absolute left-10 top-1/2 -translate-y-1/2 text-white max-w-md z-10">
           <h2 className="text-2xl md:text-4xl font-bold">
             {slides[current].title}
           </h2>
@@ -81,28 +82,28 @@ const HeroSlider = () => {
         </div>
       </div>
 
-      {/* Arrows */}
+      {/* ✅ Arrows */}
       <button
         onClick={prevSlide}
-        className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full opacity-0 group-hover:opacity-100"
+        className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full opacity-0 group-hover:opacity-100 transition"
       >
         ‹
       </button>
 
       <button
         onClick={nextSlide}
-        className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full opacity-0 group-hover:opacity-100"
+        className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full opacity-0 group-hover:opacity-100 transition"
       >
         ›
       </button>
 
-      {/* Dots */}
+      {/* ✅ Dots */}
       <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
         {slides.map((_, index) => (
           <div
             key={index}
             onClick={() => setCurrent(index)}
-            className={`h-2 rounded-full cursor-pointer ${
+            className={`h-2 rounded-full cursor-pointer transition-all ${
               current === index ? "w-6 bg-white" : "w-2 bg-white/50"
             }`}
           />
@@ -113,4 +114,3 @@ const HeroSlider = () => {
 };
 
 export default HeroSlider;
-

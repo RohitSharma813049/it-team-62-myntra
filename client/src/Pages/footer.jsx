@@ -1,19 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { FiPlus, FiMinus } from "react-icons/fi";
+import { Link } from "react-router-dom";
 
 const Footer = () => {
   const [open, setOpen] = useState(null);
-  const [isMobile, setIsMobile] = useState(false);
-
-  // 📱 detect screen size properly
-  useEffect(() => {
-    const checkScreen = () => setIsMobile(window.innerWidth < 768);
-
-    checkScreen();
-    window.addEventListener("resize", checkScreen);
-
-    return () => window.removeEventListener("resize", checkScreen);
-  }, []);
 
   const toggle = (name) => {
     setOpen((prev) => (prev === name ? null : name));
@@ -23,27 +13,24 @@ const Footer = () => {
     <div className="border-b md:border-none py-3 md:py-0">
 
       {/* HEADER */}
-      <div
-        onClick={() => isMobile && toggle(name)}
-        className="flex justify-between items-center cursor-pointer md:cursor-default"
+      <button
+        onClick={() => toggle(name)}
+        className="w-full flex justify-between items-center text-left"
         aria-expanded={open === name}
       >
         <h3 className="font-semibold text-sm tracking-wide">
           {title}
         </h3>
 
-        {/* ICON */}
         <span className="md:hidden text-lg">
           {open === name ? <FiMinus /> : <FiPlus />}
         </span>
-      </div>
+      </button>
 
       {/* CONTENT */}
       <div
-        className={`text-sm text-gray-600 mt-2 space-y-1 overflow-hidden transition-all duration-300 ${
-          open === name || !isMobile
-            ? "max-h-[500px] opacity-100"
-            : "max-h-0 opacity-0"
+        className={`text-sm text-gray-600 mt-2 transition-all duration-300 ${
+          open === name ? "block" : "hidden md:block"
         }`}
       >
         {children}
@@ -59,37 +46,46 @@ const Footer = () => {
         {/* GRID */}
         <div className="md:grid md:grid-cols-4 gap-10">
 
+          {/* ONLINE SHOPPING */}
           <Section title="ONLINE SHOPPING" name="shop">
-            <p className="hover:text-black cursor-pointer">Men</p>
-            <p className="hover:text-black cursor-pointer">Women</p>
-            <p className="hover:text-black cursor-pointer">Kids</p>
-            <p className="hover:text-black cursor-pointer">Home</p>
-            <p className="hover:text-black cursor-pointer">Beauty</p>
-            <p className="hover:text-black cursor-pointer">Genz</p>
-            <p className="hover:text-black cursor-pointer">Gift Cards</p>
-            <p className="hover:text-black cursor-pointer">Myntra Insider</p>
+            <ul className="space-y-1">
+              <li><Link to="/men" className="hover:text-black">Men</Link></li>
+              <li><Link to="/women" className="hover:text-black">Women</Link></li>
+              <li><Link to="/kids" className="hover:text-black">Kids</Link></li>
+              <li><Link to="/home" className="hover:text-black">Home</Link></li>
+              <li><Link to="/beauty" className="hover:text-black">Beauty</Link></li>
+              <li><Link to="/genz" className="hover:text-black">Genz</Link></li>
+              <li><Link to="/gift-cards" className="hover:text-black">Gift Cards</Link></li>
+              <li><Link to="/insider" className="hover:text-black">Myntra Insider</Link></li>
+            </ul>
           </Section>
 
+          {/* USEFUL LINKS */}
           <Section title="USEFUL LINKS" name="links">
-            <p>Blog</p>
-            <p>Careers</p>
-            <p>Site Map</p>
-            <p>Corporate Information</p>
-            <p>Whitehat</p>
-            <p>Cleartrip</p>
-            <p>Myntra Global</p>
+            <ul className="space-y-1">
+              <li><Link to="/blog">Blog</Link></li>
+              <li><Link to="/careers">Careers</Link></li>
+              <li><Link to="/sitemap">Site Map</Link></li>
+              <li><Link to="/corporate">Corporate Information</Link></li>
+              <li><Link to="/whitehat">Whitehat</Link></li>
+              <li><Link to="/cleartrip">Cleartrip</Link></li>
+              <li><Link to="/global">Myntra Global</Link></li>
+            </ul>
           </Section>
 
+          {/* CUSTOMER POLICIES */}
           <Section title="CUSTOMER POLICIES" name="policy">
-            <p>Contact Us</p>
-            <p>FAQ</p>
-            <p>T&C</p>
-            <p>Terms Of Use</p>
-            <p>Track Orders</p>
-            <p>Shipping</p>
-            <p>Cancellation</p>
-            <p>Privacy Policy</p>
-            <p>Grievance Redressal</p>
+            <ul className="space-y-1">
+              <li><Link to="/contact">Contact Us</Link></li>
+              <li><Link to="/faq">FAQ</Link></li>
+              <li><Link to="/terms">T&C</Link></li>
+              <li><Link to="/terms-of-use">Terms Of Use</Link></li>
+              <li><Link to="/track-orders">Track Orders</Link></li>
+              <li><Link to="/shipping">Shipping</Link></li>
+              <li><Link to="/cancellation">Cancellation</Link></li>
+              <li><Link to="/privacy">Privacy Policy</Link></li>
+              <li><Link to="/grievance">Grievance Redressal</Link></li>
+            </ul>
           </Section>
 
           {/* APP + SOCIAL */}
@@ -99,30 +95,69 @@ const Footer = () => {
             </h3>
 
             <div className="flex gap-2">
-              <div className="bg-black text-white px-3 py-1 text-xs rounded cursor-pointer">
+              <a
+                href="https://play.google.com"
+                target="_blank"
+                rel="noreferrer"
+                className="bg-black text-white px-3 py-1 text-xs rounded"
+              >
                 Play Store
-              </div>
-              <div className="bg-black text-white px-3 py-1 text-xs rounded cursor-pointer">
+              </a>
+              <a
+                href="https://apple.com/app-store"
+                target="_blank"
+                rel="noreferrer"
+                className="bg-black text-white px-3 py-1 text-xs rounded"
+              >
                 App Store
-              </div>
+              </a>
             </div>
 
             <h3 className="font-semibold text-sm mt-4 mb-2">
               KEEP IN TOUCH
             </h3>
 
-            <p className="text-sm text-gray-600">
-              Instagram • Facebook • Twitter
-            </p>
+            <div className="flex gap-3 text-sm">
+              <a href="#" className="hover:text-black">Instagram</a>
+              <a href="#" className="hover:text-black">Facebook</a>
+              <a href="#" className="hover:text-black">Twitter</a>
+            </div>
           </div>
 
         </div>
 
         {/* GUARANTEE */}
-        <div className="mt-8 text-sm text-gray-600 space-y-2 border-t pt-6">
-          <p>✔ 100% ORIGINAL guarantee for all products</p>
-          <p>✔ Return within 14 days of receiving your order</p>
-        </div>
+ <div className="mt-8 border-t pt-6">
+  <ul className="text-sm text-gray-600 space-y-3">
+
+    {/* ITEM 1 */}
+    <li className="flex items-start gap-3">
+      <span className="text-green-600 text-base font-bold mt-[2px]">
+        ✔
+      </span>
+      <p>
+        <span className="font-semibold text-gray-800">
+          100% ORIGINAL
+        </span>{" "}
+        guarantee for all products
+      </p>
+    </li>
+
+    {/* ITEM 2 */}
+    <li className="flex items-start gap-3">
+      <span className="text-green-600 text-base font-bold mt-[2px]">
+        ✔
+      </span>
+      <p>
+        <span className="font-semibold text-gray-800">
+          Return within 14 days
+        </span>{" "}
+        of receiving your order
+      </p>
+    </li>
+
+  </ul>
+</div>
 
         {/* POPULAR SEARCHES */}
         <div className="mt-8 text-xs text-gray-600 leading-relaxed border-t pt-6">
