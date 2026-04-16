@@ -4,7 +4,7 @@ import { useSelector } from "react-redux";
 
 import StructureLoader from "./components/Loader/SkalatenLoader";
 
-// 🔥 Lazy EVERYTHING (except loader)
+//  Lazy EVERYTHING (except loader)
 const Layout = lazy(() => import("./Pages/Layout"));
 const Layoutsdashboard = lazy(() => import("./Pages/Layoutsdashboard"));
 const AccountLayout = lazy(() => import("./Pages/AccountLayout"));
@@ -28,13 +28,13 @@ const Cart = lazy(() => import("./components/Account/Carts"));
 
 const Loader = () => <StructureLoader />;
 
-// 🔒 Private Route
+//  Private Route
 const PrivateRoute = ({ children }) => {
   const user = useSelector((state) => state.auth.user);
   return user ? children : <Navigate to="/login" replace />;
 };
 
-// 🔓 Public Route
+//  Public Route
 const PublicRoute = ({ children }) => {
   const user = useSelector((state) => state.auth.user);
   return user ? <Navigate to="/" replace /> : children;
@@ -44,7 +44,7 @@ function App() {
   return (
     <Routes>
 
-      {/* 🏠 HOME */}
+      {/*  HOME */}
       <Route
         path="/"
         element={
@@ -89,7 +89,7 @@ function App() {
           }
         />
 
-        {/* 📦 PRODUCT */}
+        {/*  PRODUCT */}
         <Route
           path="product/:id"
           element={
@@ -99,7 +99,7 @@ function App() {
           }
         />
 
-        {/* 🔐 LOGIN */}
+        {/*  LOGIN */}
         <Route element={<AccountLayout />}>
           <Route
             path="login"
@@ -113,7 +113,7 @@ function App() {
           />
         </Route>
 
-        {/* 👤 DASHBOARD */}
+        {/*  DASHBOARD */}
         <Route
           path="account"
           element={
@@ -137,7 +137,7 @@ function App() {
 
       </Route>
 
-      {/* ❌ 404 */}
+      {/* 404 */}
       <Route path="*" element={<h1>404 Not Found</h1>} />
 
     </Routes>
